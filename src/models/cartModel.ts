@@ -8,6 +8,7 @@ export interface ICartItem {
   quantity: number
 }
 
+
 export interface ICart extends Document {
   userId: ObjectId | string
   items: ICartItem[]

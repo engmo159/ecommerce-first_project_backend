@@ -11,7 +11,7 @@ import {
 import validateJWT from '../middlewares/validateJWT'
 
 const router = express.Router()
-
+// gat active cart
 router.get('/', async (req: ExtendRequest, res: Response) => {
   try {
     const userId = req?.user?._id
