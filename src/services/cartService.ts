@@ -3,9 +3,10 @@ import { ICartItem } from './../models/cartModel'
 import { cartModel } from '../models/cartModel'
 import productModel from '../models/productModel'
 import { IOrderItem } from '../models/orderModel'
+import { populate } from 'dotenv'
 //create new cart [helper function]
 interface CreateCartForUser {
-  userId: string
+  userId?: string
 }
 const createCartForUser = async ({ userId }: CreateCartForUser) => {
   const cart = await cartModel.create({ userId, totalAmount: 0 })
@@ -13,12 +14,22 @@ const createCartForUser = async ({ userId }: CreateCartForUser) => {
   return cart
 }
 interface GetActiveCartForUser {
-  userId: string
+  userId?: string
+  populateProduct?: boolean
 }
 export const getActiveCartForUser = async ({
   userId,
+  populateProduct,
 }: GetActiveCartForUser) => {
-  let cart = await cartModel.findOne({ userId, status: 'active' })
+  let cart
+  if (populateProduct) {
+    cart = await cartModel
+      .findOne({ userId, status: 'active' })
+      .populate('items.product')
+  } else {
+    cart = await cartModel.findOne({ userId, status: 'active' })
+  }
+
   if (!cart) {
     cart = await createCartForUser({ userId })
   }
@@ -26,26 +37,29 @@ export const getActiveCartForUser = async ({
 }
 // clear cart
 interface ClearCart {
-  userId: string
+  userId?: string
 }
 
 export const clearCart = async ({ userId }: ClearCart) => {
   const cart = await getActiveCartForUser({ userId })
   cart.items = []
   cart.totalAmount = 0
-  const updatedCart = await cart.save()
-  return { data: { updatedCart }, statusCode: 200 }
+  await cart.save()
+  return {
+    data: await getActiveCartForUser({ userId, populateProduct: true }),
+    statusCode: 200,
+  }
 }
 // add items to cart
 interface AddItemToCart {
   productId: any
-  quantity: number
-  userId: string
+  quantity?: number
+  userId?: string
 }
 
 export const addItemToCart = async ({
   productId,
-  quantity,
+  // quantity,
   userId,
 }: AddItemToCart) => {
   const cart = await getActiveCartForUser({ userId })
@@ -59,18 +73,22 @@ export const addItemToCart = async ({
   if (!product) {
     return { data: 'product not found', statusCode: 400 }
   }
-  if (product.stock < quantity) {
-    return { data: 'low stock', statusCode: 400 }
-  }
+  // if (product.stock < quantity) {
+  //   return { data: 'low stock', statusCode: 400 }
+  // }
   cart.items.push({
     product: productId,
-    quantity,
+    quantity: 1,
     unitPrice: product.price,
   })
   // update total amount for cart
-  cart.totalAmount += product.price * quantity
-  const updatedCart = await cart.save()
-  return { data: { updatedCart }, statusCode: 200 }
+  // cart.totalAmount += product.price * quantity
+  cart.totalAmount += product.price * 1
+  await cart.save()
+  return {
+    data: await getActiveCartForUser({ userId, populateProduct: true }),
+    statusCode: 200,
+  }
 }
 
 // update items in cart
@@ -78,7 +96,7 @@ export const addItemToCart = async ({
 interface UpdateItemInCart {
   productId: any
   quantity: number
-  userId: string
+  userId?: string
 }
 export const updateItemInCart = async ({
   productId,
@@ -106,14 +124,17 @@ export const updateItemInCart = async ({
 
   total += existInCart.quantity * existInCart.unitPrice
   cart.totalAmount = total
-  const updatedCart = await cart.save()
-  return { data: { updatedCart }, statusCode: 200 }
+  await cart.save()
+  return {
+    data: await getActiveCartForUser({ userId, populateProduct: true }),
+    statusCode: 200,
+  }
 }
 
 // delete items in cart
 interface DeleteItemInCart {
   productId: any
-  userId: string
+  userId?: string
 }
 
 export const deleteItemInCart = async ({
@@ -131,8 +152,11 @@ export const deleteItemInCart = async ({
   const total = calculateTotalCartItems({ cartItems: otherCartItems })
   cart.items = otherCartItems
   cart.totalAmount = total
-  const updatedCart = await cart.save()
-  return { data: { updatedCart }, statusCode: 200 }
+  await cart.save()
+  return {
+    data: await getActiveCartForUser({ userId, populateProduct: true }),
+    statusCode: 200,
+  }
 }
 
 // calculate total cart items [helper function]
@@ -163,8 +187,8 @@ export const checkout = async ({ userId, address }: Checkout) => {
       return { data: 'product not found', statusCode: 400 }
     }
     const orderItem: IOrderItem = {
-      productTitle: product.name,
-      productImage: product.thumbnail,
+      productTitle: product.title,
+      productImage: product.image,
       quantity: item.quantity,
       unitPrice: item.unitPrice,
     }

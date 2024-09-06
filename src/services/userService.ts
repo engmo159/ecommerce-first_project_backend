@@ -6,25 +6,52 @@ import { Request, Response } from 'express'
 // register
 
 interface RegisterParams {
-  name: string
+  firstName: string
+  lastName: string
   email: string
   password: string
+  city: string
+  gender: string
+  phone: string
 }
 
-export const register = async ({ name, email, password }: RegisterParams) => {
+export const register = async ({
+  firstName,
+  lastName,
+  email,
+  password,
+  city,
+  gender,
+  phone,
+}: RegisterParams) => {
   const findUser = await userModel.findOne({ email })
   if (findUser) {
     return { data: 'User already exists!', statusCode: 400 }
   }
   const hashedPassword = await bcrypt.hash(password, 10)
   const newUser = new userModel({
-    name,
+    firstName,
+    lastName,
     email,
     password: hashedPassword,
+    city,
+    gender,
+    phone,
     role: 'user',
   })
   await newUser.save()
-  return { data: generateJWT({ name, email, role: 'user' }), statusCode: 200 }
+  return {
+    data: generateJWT({
+      firstName,
+      lastName,
+      email,
+      city,
+      gender,
+      phone,
+      role: 'user',
+    }),
+    statusCode: 200,
+  }
 }
 
 // login
@@ -40,7 +67,15 @@ export const login = async ({ email, password }: LoginParams) => {
   const passwordMatch = await bcrypt.compare(password, findUser.password)
   if (passwordMatch) {
     return {
-      data: generateJWT({ email, name: findUser.name, role: findUser.role }),
+      data: generateJWT({
+        email,
+        firstName: findUser.firstName,
+        lastName: findUser.lastName,
+        city: findUser.city,
+        gender: findUser.gender,
+        phone: findUser.phone,
+        role: findUser.role,
+      }),
       statusCode: 200,
     }
   }

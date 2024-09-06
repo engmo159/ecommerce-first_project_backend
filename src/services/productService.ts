@@ -5,12 +5,18 @@ import { productArray } from '../data/product'
 // @desc    Fetch all products
 // @route   GET /api/products
 // @access  Public
-export const getAllProducts = async (req: Request, res: Response) => {
+export const getAllProducts = async () => {
   try {
     const products = await productModel.find({})
-    res.json(products)
+    if (!products) {
+      return
+      // res.status(404).json({ message: 'Products not found' })
+    }
+    return products
+    //  res.json(products)
   } catch (error) {
-    res.status(500).json({ message: 'Server error' })
+    return
+    //  res.status(500).json({ message: 'Server error' })
   }
 }
 
@@ -21,12 +27,12 @@ export const getProductById = async (req: Request, res: Response) => {
   try {
     const product = await productModel.findById(req.params.id)
     if (product) {
-      res.json(product)
+      return res.json(product) // Add return to stop further execution
     } else {
-      res.status(404).json({ message: 'Product not found' })
+      return res.status(404).json({ message: 'Product not found' }) // Add return
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server error' })
+    return res.status(500).json({ message: 'Server error' }) // Add return
   }
 }
 
@@ -34,23 +40,26 @@ export const getProductById = async (req: Request, res: Response) => {
 // @route   POST /api/products
 // @access  Private/Admin
 export const createProduct = async (req: Request, res: Response) => {
-  const { name, description, price, stock, thumbnail } = req.body
+  const { title, description, price, category, image, rating } = req.body
 
   const product = new productModel({
-    name,
+    title,
     description,
     price,
-    stock,
-    thumbnail,
-    rating: 0,
-    numReviews: 0,
+    category,
+    image,
+    rating: rating || {
+      rate: 0,
+      count: 0,
+    },
+    stock: 10,
   })
 
   try {
     const createdProduct = await product.save()
-    res.status(201).json(createdProduct)
+    return res.status(201).json(createdProduct) // Add return
   } catch (error) {
-    res.status(500).json({ message: 'Server error' })
+    return res.status(500).json({ message: 'Server error' }) // Add return
   }
 }
 
@@ -58,26 +67,25 @@ export const createProduct = async (req: Request, res: Response) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 export const updateProduct = async (req: Request, res: Response) => {
-  const { name, description, price, stock, thumbnail } = req.body
+  const { title, description, price, category, image } = req.body
 
   try {
     const product = await productModel.findById(req.params.id)
 
     if (product) {
-      product.name = name
+      product.title = title
       product.description = description
       product.price = price
-
-      product.stock = stock
-      product.thumbnail = thumbnail
+      product.category = category
+      product.image = image
 
       const updatedProduct = await product.save()
-      res.json(updatedProduct)
+      return res.json(updatedProduct) // Add return
     } else {
-      res.status(404).json({ message: 'Product not found' })
+      return res.status(404).json({ message: 'Product not found' }) // Add return
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server error' })
+    return res.status(500).json({ message: 'Server error' }) // Add return
   }
 }
 
@@ -90,19 +98,20 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
     if (product) {
       await product.deleteOne()
-      res.json({ message: 'Product removed' })
+      return res.json({ message: 'Product removed' })
     } else {
-      res.status(404).json({ message: 'Product not found' })
+      return res.status(404).json({ message: 'Product not found' })
     }
   } catch (error) {
-    res.status(500).json({ message: 'Server error' })
+    return res.status(500).json({ message: 'Server error' })
   }
 }
 
-//insert products to database
+// Insert products to database
 export const getProducts = async () => {
   return await productModel.find()
 }
+
 export const seedInitialProducts = async () => {
   try {
     const existingProducts = await getProducts()

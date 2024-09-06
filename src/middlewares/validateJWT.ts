@@ -24,8 +24,12 @@ const validateJWT = (req: ExtendRequest, res: Response, next: NextFunction) => {
       return
     }
     const userPayload = payload as {
+      firstName: string
+      lastName: string
       email: string
-      name: string
+      city: string
+      gender: string
+      phone: string
       role: string
     }
     // fetch user from database based on payload
