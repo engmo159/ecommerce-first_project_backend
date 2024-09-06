@@ -53,20 +53,27 @@ export const clearCart = async ({ userId }: ClearCart) => {
 // add items to cart
 interface AddItemToCart {
   productId: any
-  quantity?: number
+  quantity: number
   userId?: string
 }
 
 export const addItemToCart = async ({
   productId,
-  // quantity,
+  quantity,
   userId,
 }: AddItemToCart) => {
   const cart = await getActiveCartForUser({ userId })
   //   does item exist in cart
   const existInCart = cart.items.find(p => p.product.toString() === productId)
   if (existInCart) {
-    return { data: 'item already in cart', statusCode: 400 }
+    // return { data: 'item already in cart', statusCode: 400 }
+    // If the item exists, increase the quantity by 1
+    existInCart.quantity += 1
+
+    // Optionally save the cart if needed (assuming `cart.save()` persists it)
+    await cart.save()
+
+    return { data: 'Item quantity increased by 1', statusCode: 200 }
   }
   // fetch product
   const product = await productModel.findById(productId)
@@ -78,12 +85,11 @@ export const addItemToCart = async ({
   // }
   cart.items.push({
     product: productId,
-    quantity: 1,
+    quantity,
     unitPrice: product.price,
   })
   // update total amount for cart
-  // cart.totalAmount += product.price * quantity
-  cart.totalAmount += product.price * 1
+  cart.totalAmount += product.price * quantity
   await cart.save()
   return {
     data: await getActiveCartForUser({ userId, populateProduct: true }),

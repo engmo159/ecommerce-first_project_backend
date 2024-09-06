@@ -26,7 +26,7 @@ router.post('/items', async (req: ExtendRequest, res) => {
   try {
     const userId = req?.user?._id
     const { productId, quantity } = req.body
-    const response = await addItemToCart({ userId, productId })
+    const response = await addItemToCart({ userId, productId, quantity })
     return res.status(response.statusCode).send(response.data)
   } catch (err) {
     return res.status(500).send('something went wrong!')
