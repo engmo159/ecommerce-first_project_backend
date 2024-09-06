@@ -68,6 +68,13 @@ export const addItemToCart = async ({
   if (existInCart) {
     // return { data: 'item already in cart', statusCode: 400 }
     // If the item exists, increase the quantity by 1
+    const product = await productModel.findById(productId)
+    if (!product) {
+      return { data: 'product not found', statusCode: 400 }
+    }
+    if (product.stock < quantity) {
+      return { data: 'low stock', statusCode: 400 }
+    }
     existInCart.quantity += 1
 
     // Optionally save the cart if needed (assuming `cart.save()` persists it)
