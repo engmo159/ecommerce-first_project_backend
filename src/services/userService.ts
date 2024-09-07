@@ -120,8 +120,7 @@ interface UpdateUserParams {
 }
 
 // Update user function
-export const updateUser = async (req: Request, res: Response) => {
-  const userId = req.params.id // Assuming you're passing the user ID as a URL parameter
+export const updateUser = async (req: UserRequest, res: Response) => {
   const {
     firstName,
     lastName,
@@ -134,7 +133,7 @@ export const updateUser = async (req: Request, res: Response) => {
   }: UpdateUserParams = req.body
 
   try {
-    const user = await userModel.findById(userId)
+    const user = await userModel.findById(req.user._id).select('-password')
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
