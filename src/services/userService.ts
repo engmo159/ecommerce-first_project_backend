@@ -106,3 +106,59 @@ export const getUserInfo = async (req: UserRequest, res: Response) => {
     res.status(500).json({ message: 'Server error' })
   }
 }
+
+// update user data
+interface UpdateUserParams {
+  firstName?: string
+  lastName?: string
+  email?: string
+  password?: string
+  city?: string
+  gender?: string
+  phone?: string
+  image?: string
+}
+
+// Update user function
+export const updateUser = async (req: Request, res: Response) => {
+  const userId = req.params.id // Assuming you're passing the user ID as a URL parameter
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    city,
+    gender,
+    phone,
+    image,
+  }: UpdateUserParams = req.body
+
+  try {
+    const user = await userModel.findById(userId)
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Update the user's fields if provided in the request body
+    if (firstName) user.firstName = firstName
+    if (lastName) user.lastName = lastName
+    if (email) user.email = email
+    if (city) user.city = city
+    if (gender) user.gender = gender
+    if (phone) user.phone = phone
+    if (image) user.image = image
+
+    // Update password if provided
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10)
+      user.password = hashedPassword
+    }
+
+    const updatedUser = await user.save()
+
+    return res.json(updatedUser) // Add return
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error })
+  }
+}

@@ -1,5 +1,10 @@
 import express from 'express'
-import { login, register, getUserInfo } from '../services/userService'
+import {
+  login,
+  register,
+  getUserInfo,
+  updateUser,
+} from '../services/userService'
 import validateJWT from '../middlewares/validateJWT'
 
 const router = express.Router()
@@ -40,4 +45,15 @@ router.get('/', async (req, res) => {
     return res.status(500).json({ message: 'Server error' })
   }
 })
+
+// Update user data route
+router.put('/edit/:id', validateJWT, async (req, res) => {
+  try {
+    const updatedUser = await updateUser(req, res)
+    return res.status(200).send(updatedUser)
+  } catch (error: any) {
+    return res.status(500).json({ message: 'Server error' })
+  }
+})
+
 export default router
