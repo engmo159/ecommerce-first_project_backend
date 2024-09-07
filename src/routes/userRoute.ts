@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
 })
 
 // Update user data route
-router.put('/edit/:id', validateJWT, async (req, res) => {
+router.put('/edit', validateJWT, async (req, res) => {
   try {
     const updatedUser = await updateUser(req, res)
     return res.status(200).send(updatedUser)
