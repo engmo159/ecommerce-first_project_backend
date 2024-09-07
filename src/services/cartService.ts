@@ -63,35 +63,47 @@ export const addItemToCart = async ({
   userId,
 }: AddItemToCart) => {
   const cart = await getActiveCartForUser({ userId })
-  //   does item exist in cart
-  const existInCart = cart.items.find(p => p.product.toString() === productId)
-  if (existInCart) {
-    // return { data: 'item already in cart', statusCode: 400 }
-    // If the item exists, increase the quantity by 1
 
-    existInCart.quantity += 1
-
-    // Optionally save the cart if needed (assuming `cart.save()` persists it)
-    await cart.save()
-
-    return { data: 'Item quantity increased by 1', statusCode: 200 }
-  }
-  // fetch product
+  // Fetch product
   const product = await productModel.findById(productId)
   if (!product) {
-    return { data: 'product not found', statusCode: 400 }
+    return { data: 'Product not found', statusCode: 400 }
   }
-  // if (product.stock < quantity) {
-  //   return { data: 'low stock', statusCode: 400 }
-  // }
-  cart.items.push({
-    product: productId,
-    quantity,
-    unitPrice: product.price,
-  })
-  // update total amount for cart
-  cart.totalAmount += product.price * quantity
+
+  // Check if the requested quantity is greater than stock
+  if (product.stock < quantity) {
+    return { data: 'Insufficient stock', statusCode: 400 }
+  }
+
+  // Check if the product already exists in the cart
+  const existInCart = cart.items.find(p => p.product.toString() === productId)
+
+  if (existInCart) {
+    // Check stock before increasing quantity
+    if (product.stock < existInCart.quantity + quantity) {
+      return { data: 'Insufficient stock to add more items', statusCode: 400 }
+    }
+
+    // Increase the quantity of the existing item in the cart
+    existInCart.quantity += quantity
+    cart.totalAmount += product.price * quantity
+  } else {
+    // Add new item to the cart
+    cart.items.push({
+      product: productId,
+      quantity,
+      unitPrice: product.price,
+    })
+    cart.totalAmount += product.price * quantity
+  }
+
+  // Update product stock
+  product.stock -= quantity
+  await product.save()
+
+  // Save the cart
   await cart.save()
+
   return {
     data: await getActiveCartForUser({ userId, populateProduct: true }),
     statusCode: 200,
