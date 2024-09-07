@@ -133,13 +133,15 @@ export const updateUser = async (req: UserRequest, res: Response) => {
   }: UpdateUserParams = req.body
 
   try {
+    // Find the user by ID, excluding the password field
     const user = await userModel.findById(req.user._id).select('-password')
 
     if (!user) {
+      // Return early if user is not found
       return res.status(404).json({ message: 'User not found' })
     }
 
-    // Update the user's fields if provided in the request body
+    // Update user fields only if they are provided in the request body
     if (firstName) user.firstName = firstName
     if (lastName) user.lastName = lastName
     if (email) user.email = email
@@ -148,16 +150,19 @@ export const updateUser = async (req: UserRequest, res: Response) => {
     if (phone) user.phone = phone
     if (image) user.image = image
 
-    // Update password if provided
+    // Update password if a new one is provided
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10)
       user.password = hashedPassword
     }
 
+    // Save the updated user to the database
     const updatedUser = await user.save()
 
-    return res.json(updatedUser) // Add return
+    // Return the updated user object
+    return res.json(updatedUser)
   } catch (error) {
-    res.status(500).json({ message: 'Server error', error })
+    // Handle any server errors
+    return res.status(500).json({ message: 'Server error', error })
   }
 }

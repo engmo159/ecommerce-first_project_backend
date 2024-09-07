@@ -49,8 +49,7 @@ router.get('/', async (req, res) => {
 // Update user data route
 router.put('/edit', validateJWT, async (req, res) => {
   try {
-    const updatedUser = await updateUser(req, res)
-    return res.status(200).send(updatedUser)
+    await updateUser(req, res)
   } catch (error: any) {
     return res.status(500).json({ message: 'Server error' })
   }
