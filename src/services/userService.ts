@@ -138,7 +138,7 @@ export const updateUser = async (req: UserRequest, res: Response) => {
 
     if (!user) {
       // Return early if user is not found
-      return res.status(404).json({ message: 'User not found' })
+      throw new Error('User not found')
     }
 
     // Update user fields only if they are provided in the request body
@@ -160,9 +160,9 @@ export const updateUser = async (req: UserRequest, res: Response) => {
     const updatedUser = await user.save()
 
     // Return the updated user object
-    return res.json(updatedUser)
-  } catch (error) {
+    return updatedUser
+  } catch (error: any) {
     // Handle any server errors
-    return res.status(500).json({ message: 'Server error', error })
+    throw new Error(error.message || 'Server error')
   }
 }
