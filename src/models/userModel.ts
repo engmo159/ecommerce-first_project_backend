@@ -8,6 +8,7 @@ export interface IUser extends Document {
   city: string
   gender: string
   phone: string
+  image: string
   role: string
 }
 const userSchema = new Schema<IUser>({
@@ -33,6 +34,9 @@ const userSchema = new Schema<IUser>({
     type: String,
   },
   phone: {
+    type: String,
+  },
+  image: {
     type: String,
   },
   role: {

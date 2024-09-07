@@ -5,7 +5,7 @@ import validateJWT from '../middlewares/validateJWT'
 const router = express.Router()
 router.post('/register', async (req, res) => {
   try {
-    const { firstName, lastName, email, city, gender, phone, password } =
+    const { firstName, lastName, email, city, gender, phone, password, image } =
       req.body
     const { statusCode, data } = await register({
       firstName,
@@ -15,6 +15,7 @@ router.post('/register', async (req, res) => {
       gender,
       phone,
       password,
+      image,
     })
     return res.status(statusCode).send(data)
   } catch (error: any) {

@@ -7,12 +7,13 @@ import { Request, Response } from 'express'
 
 interface RegisterParams {
   firstName: string
-  lastName: string
+  lastName?: string
   email: string
   password: string
-  city: string
-  gender: string
-  phone: string
+  city?: string
+  gender?: string
+  phone?: string
+  image?: string
 }
 
 export const register = async ({
@@ -23,6 +24,7 @@ export const register = async ({
   city,
   gender,
   phone,
+  image,
 }: RegisterParams) => {
   const findUser = await userModel.findOne({ email })
   if (findUser) {
@@ -37,6 +39,7 @@ export const register = async ({
     city,
     gender,
     phone,
+    image,
     role: 'user',
   })
   await newUser.save()
@@ -48,6 +51,7 @@ export const register = async ({
       city,
       gender,
       phone,
+      image,
       role: 'user',
     }),
     statusCode: 200,
@@ -74,6 +78,7 @@ export const login = async ({ email, password }: LoginParams) => {
         city: findUser.city,
         gender: findUser.gender,
         phone: findUser.phone,
+        image: findUser.image,
         role: findUser.role,
       }),
       statusCode: 200,
