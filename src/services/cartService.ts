@@ -97,8 +97,6 @@ export const addItemToCart = async ({
     cart.totalAmount += product.price * quantity
   }
 
-  // Update product stock
-  product.stock -= quantity
   await product.save()
 
   // Save the cart
