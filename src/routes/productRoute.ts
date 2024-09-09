@@ -28,12 +28,9 @@ router.get('/last-product', async (req, res) => {
   }
 })
 router.get('/:id', async (req, res) => {
-  try {
-    const products = await getProductById(req, res)
-    return res.status(200).send(products)
-  } catch (err) {
-    return res.status(500).send('something went wrong!')
-  }
+  const { id } = req.params
+  const { data, statusCode } = await getProductById(id)
+  return res.status(statusCode).send(data)
 })
 router.put('/edit/:id', async (req, res) => {
   try {

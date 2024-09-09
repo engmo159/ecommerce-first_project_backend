@@ -23,16 +23,16 @@ export const getAllProducts = async () => {
 // @desc    Fetch single product by ID
 // @route   GET /api/products/:id
 // @access  Public
-export const getProductById = async (req: Request, res: Response) => {
+export const getProductById = async (id: string) => {
   try {
-    const product = await productModel.findById(req.params.id)
+    const product = await productModel.findById(id)
     if (product) {
-      return res.json(product) // Add return to stop further execution
+      return { data: product, statusCode: 200 }
     } else {
-      return res.status(404).json({ message: 'Product not found' }) // Add return
+      return { data: { message: 'Product not found' }, statusCode: 404 }
     }
   } catch (error) {
-    return res.status(500).json({ message: 'Server error' }) // Add return
+    return { data: { message: 'Server error' }, statusCode: 500 }
   }
 }
 
