@@ -66,20 +66,23 @@ export const updateProduct = async (req: Request, res: Response) => {
   try {
     const product = await productModel.findById(req.params.id)
 
-    if (product) {
-      product.title = title
-      product.description = description
-      product.price = price
-      product.category = category
-      product.image = image
-
-      const updatedProduct = await product.save()
-      return res.json(updatedProduct) // Add return
-    } else {
-      return res.status(404).json({ message: 'Product not found' }) // Add return
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' }) // Return if not found
     }
+
+    // Update product details
+    product.title = title
+    product.description = description
+    product.price = price
+    product.category = category
+    product.image = image
+
+    // Save the updated product
+    const updatedProduct = await product.save()
+    return res.json(updatedProduct) // Return the updated product
   } catch (error) {
-    return res.status(500).json({ message: 'Server error' }) // Add return
+    console.error('Error updating product:', error) // Log the error for debugging
+    return res.status(500).json({ message: 'Server error' }) // Send error response
   }
 }
 

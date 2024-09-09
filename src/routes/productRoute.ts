@@ -34,12 +34,12 @@ router.get('/:id', async (req, res) => {
 })
 router.put('/edit/:id', async (req, res) => {
   try {
-    const products = await updateProduct(req, res)
-    return res.status(200).send(products)
+    await updateProduct(req, res)
   } catch (err) {
     return res.status(500).send('something went wrong!')
   }
 })
+
 router.delete('/:id', async (req, res) => {
   try {
     const products = await deleteProduct(req, res)
