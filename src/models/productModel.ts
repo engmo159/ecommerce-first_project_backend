@@ -23,12 +23,12 @@ const RatingSchema: Schema = new Schema({
 const ProductSchema: Schema = new Schema(
   {
     title: { type: String, required: true },
-    price: { type: Number, required: true },
-    description: { type: String, required: true },
+    price: { type: Number },
+    description: { type: String },
     category: { type: String },
-    image: { type: String, required: true },
+    image: { type: String },
     rating: { type: RatingSchema },
-    stock: { type: Number, required: true },
+    stock: { type: Number },
   },
   { timestamps: true }
 )

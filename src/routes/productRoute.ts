@@ -71,10 +71,10 @@ router.delete('/:id', async (req, res) => {
 
 router.post('/add', async (req, res) => {
   try {
-    const products = await createProduct(req, res)
-    return res.status(200).send(products)
+    // Directly call createProduct which handles the response itself
+    await createProduct(req, res)
   } catch (err) {
-    return res.status(500).send('something went wrong!')
+    return res.status(500).send('Something went wrong!')
   }
 })
 

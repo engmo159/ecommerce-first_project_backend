@@ -50,10 +50,21 @@ export const createProduct = async (req: Request, res: Response) => {
   })
 
   try {
-    const createdProduct = await product.save()
-    return res.status(201).json(createdProduct) // Add return
+    // Save the newly created product
+    await product.save()
+
+    // Fetch all products after adding the new one
+    const allProducts = await productModel.find()
+
+    // Return the updated product list
+    return res.status(201).json({
+      message: 'Product created successfully',
+      products: allProducts,
+    })
   } catch (error) {
-    return res.status(500).json({ message: 'Server error' }) // Add return
+    console.error('Error creating product:', error)
+
+    return res.status(500).json({ message: 'Server error' })
   }
 }
 
