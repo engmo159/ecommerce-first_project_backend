@@ -91,17 +91,26 @@ export const updateProduct = async (req: Request, res: Response) => {
 // @access  Private/Admin
 // In productService.ts
 
-export const deleteProduct = async (id: string) => {
+export const deleteProductService = async (productId: string) => {
   try {
-    const product = await productModel.findById(id)
-    if (product) {
-      await product.deleteOne()
-      return { message: 'Product removed' }
-    } else {
-      return { message: 'Product not found' }
+    // Find the product by ID
+    const product = await productModel.findById(productId)
+
+    // If the product is not found, return null
+    if (!product) {
+      return null
     }
-  } catch (error) {
-    throw new Error('Server error')
+
+    // Delete the product
+    await product.deleteOne()
+
+    // Fetch the remaining products after deletion
+    const remainingProducts = await productModel.find()
+
+    // Return the updated list of products
+    return remainingProducts
+  } catch (error: any) {
+    throw new Error(`Error deleting product: ${error.message}`)
   }
 }
 // Insert products to database

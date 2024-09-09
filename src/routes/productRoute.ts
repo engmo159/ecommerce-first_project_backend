@@ -1,11 +1,13 @@
-import { getLastProduct } from './../services/productService'
+import {
+  deleteProductService,
+  getLastProduct,
+} from './../services/productService'
 import express from 'express'
 import {
   getAllProducts,
   getProductById,
   createProduct,
   updateProduct,
-  deleteProduct,
 } from '../services/productService'
 const router = express.Router()
 
@@ -42,15 +44,32 @@ router.put('/edit/:id', async (req, res) => {
 
 // In your router file
 
-router.delete('/:id', async (req, res) => {
+router.delete('/product/:id', async (req, res) => {
   try {
-    const result = await deleteProduct(req.params.id)
-    res.status(200).json(result)
-  } catch (error) {
-    console.error('Error in deleting product:', error)
-    res.status(500).json({ message: 'Internal Server Error' })
+    const productId = req.params.id
+
+    // Call the service to delete the product and get the updated list
+    const remainingProducts = await deleteProductService(productId)
+
+    if (!remainingProducts) {
+      // If the product is not found, return a 404 response
+      return res.status(404).json({ message: 'Product not found' })
+    }
+
+    // Return success message and updated product list
+    return res.json({
+      message: 'Product removed successfully',
+      products: remainingProducts,
+    })
+  } catch (error: any) {
+    console.error('Error deleting product:', error)
+    // Return a server error response
+    return res
+      .status(500)
+      .json({ message: 'Server error', error: error.message })
   }
 })
+
 router.post('/add', async (req, res) => {
   try {
     const products = await createProduct(req, res)
