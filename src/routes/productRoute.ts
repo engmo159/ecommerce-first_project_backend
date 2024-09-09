@@ -1,3 +1,4 @@
+import { getLastProduct } from './../services/productService'
 import express from 'express'
 import {
   getAllProducts,
@@ -48,4 +49,10 @@ router.post('/add', async (req, res) => {
     return res.status(500).send('something went wrong!')
   }
 })
+
+router.get('/last-product', async (req, res) => {
+  const { data, statusCode } = await getLastProduct()
+  return res.status(statusCode).send(data)
+})
+
 export default router

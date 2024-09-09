@@ -122,3 +122,16 @@ export const seedInitialProducts = async () => {
     console.error('can not seed product database', error)
   }
 }
+
+// get last product added
+export const getLastProduct = async () => {
+  try {
+    const product = await productModel.findOne().sort({ createdAt: -1 })
+    if (!product) {
+      return { data: 'No products found', statusCode: 404 }
+    }
+    return { data: product, statusCode: 200 }
+  } catch (error) {
+    return { data: 'Server error', statusCode: 500 }
+  }
+}
