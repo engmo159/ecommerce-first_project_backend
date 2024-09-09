@@ -4,6 +4,7 @@ import {
   register,
   getUserInfo,
   updateUser,
+  getAllUsers,
 } from '../services/userService'
 import validateJWT from '../middlewares/validateJWT'
 
@@ -24,7 +25,9 @@ router.post('/register', async (req, res) => {
     })
     return res.status(statusCode).send(data)
   } catch (error: any) {
-    return res.status(500).send('something went wrong!')
+    return res
+      .status(500)
+      .json({ message: 'Something went wrong!', error: error.message })
   }
 })
 router.post('/login', async (req, res) => {
@@ -33,7 +36,9 @@ router.post('/login', async (req, res) => {
     const { statusCode, data } = await login({ email, password })
     return res.status(statusCode).send(data)
   } catch (error: any) {
-    return res.status(500).send('something went wrong!')
+    return res
+      .status(500)
+      .json({ message: 'Something went wrong!', error: error.message })
   }
 })
 router.get('/me', validateJWT, getUserInfo)
@@ -41,8 +46,10 @@ router.get('/me', validateJWT, getUserInfo)
 router.get('/', async (req, res) => {
   try {
     return res.send('<h1>Welcome to the Homepage</h1>')
-  } catch (error) {
-    return res.status(500).json({ message: 'Server error' })
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ message: 'Something went wrong!', error: error.message })
   }
 })
 
@@ -57,13 +64,16 @@ router.put('/edit', validateJWT, async (req, res) => {
         .status(200)
         .json({ message: 'User updated successfully', user: updatedUser })
     } else {
-      return res.status(404).json({ message: 'User not found' })
+      return res.status(500).json({ message: 'Something went wrong!' })
     }
   } catch (error: any) {
+    return res.status(500)
     return res
       .status(500)
-      .json({ message: 'Server error', error: error.message })
+      .json({ message: 'Something went wrong!', error: error.message })
   }
 })
 
+// Get all users route - protected with JWT validation middleware
+router.get('/users', validateJWT, getAllUsers)
 export default router

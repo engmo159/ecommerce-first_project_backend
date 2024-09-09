@@ -166,3 +166,22 @@ export const updateUser = async (req: UserRequest, res: Response) => {
     throw new Error(error.message || 'Server error')
   }
 }
+
+// get all users
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    // Find all users, excluding passwords for security
+    const users = await userModel.find().select('-password')
+
+    // If no users are found, return a 404
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: 'No users found' })
+    }
+
+    // Return the list of users
+    res.status(200).json(users)
+  } catch (error: any) {
+    // Handle any server errors
+    res.status(500).json({ message: 'Server error', error: error.message })
+  }
+}
