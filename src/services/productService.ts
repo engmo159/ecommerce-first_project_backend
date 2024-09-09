@@ -34,7 +34,7 @@ export const getProductById = async (id: string) => {
 // @route   POST /api/products
 // @access  Private/Admin
 export const createProduct = async (req: Request, res: Response) => {
-  const { title, description, price, category, image, rating } = req.body
+  const { title, description, price, category, image, rating, stock } = req.body
 
   const product = new productModel({
     title,
@@ -46,7 +46,7 @@ export const createProduct = async (req: Request, res: Response) => {
       rate: 0,
       count: 0,
     },
-    stock: 10,
+    stock,
   })
 
   try {
