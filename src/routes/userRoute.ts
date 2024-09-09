@@ -68,7 +68,6 @@ router.put('/edit', validateJWT, async (req, res) => {
       return res.status(500).json({ message: 'Something went wrong!' })
     }
   } catch (error: any) {
-    return res.status(500)
     return res
       .status(500)
       .json({ message: 'Something went wrong!', error: error.message })
