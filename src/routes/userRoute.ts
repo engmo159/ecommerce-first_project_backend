@@ -5,6 +5,7 @@ import {
   getUserInfo,
   updateUser,
   getAllUsers,
+  getLastRegisteredUser,
 } from '../services/userService'
 import validateJWT from '../middlewares/validateJWT'
 
@@ -77,3 +78,8 @@ router.put('/edit', validateJWT, async (req, res) => {
 // Get all users route - protected with JWT validation middleware
 router.get('/users', validateJWT, getAllUsers)
 export default router
+
+router.get('/last-user', async (req, res) => {
+  const { data, statusCode } = await getLastRegisteredUser()
+  return res.status(statusCode).send(data)
+})

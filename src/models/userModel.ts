@@ -11,39 +11,42 @@ export interface IUser extends Document {
   image: string
   role: string
 }
-const userSchema = new Schema<IUser>({
-  firstName: {
-    type: String,
-    required: true,
+const userSchema = new Schema<IUser>(
+  {
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+    },
+    gender: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    image: {
+      type: String,
+    },
+    role: {
+      type: String,
+      required: true,
+    },
   },
-  lastName: {
-    type: String,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  city: {
-    type: String,
-  },
-  gender: {
-    type: String,
-  },
-  phone: {
-    type: String,
-  },
-  image: {
-    type: String,
-  },
-  role: {
-    type: String,
-    required: true,
-  },
-})
+  { timestamps: true }
+)
 
 const userModel = mongoose.model<IUser>('User', userSchema)
 

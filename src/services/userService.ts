@@ -185,3 +185,15 @@ export const getAllUsers = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error', error: error.message })
   }
 }
+// get last registered user
+export const getLastRegisteredUser = async () => {
+  try {
+    const user = await userModel.findOne().sort({ createdAt: -1 })
+    if (!user) {
+      return { data: 'No users found', statusCode: 404 }
+    }
+    return { data: user, statusCode: 200 }
+  } catch (error) {
+    return { data: 'Server error', statusCode: 500 }
+  }
+}
