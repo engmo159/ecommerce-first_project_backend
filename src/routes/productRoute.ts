@@ -42,28 +42,27 @@ router.put('/edit/:id', async (req, res) => {
   }
 })
 
-// In your router file
-
-router.delete('/product/:id', async (req, res) => {
+// DELETE route for deleting a product and returning updated products
+router.delete('/:id', async (req, res) => {
   try {
     const productId = req.params.id
 
     // Call the service to delete the product and get the updated list
     const remainingProducts = await deleteProductService(productId)
 
+    // If the product is not found, return 404
     if (!remainingProducts) {
-      // If the product is not found, return a 404 response
       return res.status(404).json({ message: 'Product not found' })
     }
 
     // Return success message and updated product list
     return res.json({
-      message: 'Product removed successfully',
+      message: 'Product deleted successfully',
       products: remainingProducts,
     })
   } catch (error: any) {
+    // Log and return server error
     console.error('Error deleting product:', error)
-    // Return a server error response
     return res
       .status(500)
       .json({ message: 'Server error', error: error.message })

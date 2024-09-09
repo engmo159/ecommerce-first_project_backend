@@ -96,15 +96,15 @@ export const deleteProductService = async (productId: string) => {
     // Find the product by ID
     const product = await productModel.findById(productId)
 
-    // If the product is not found, return null
+    // If the product does not exist, return null
     if (!product) {
       return null
     }
 
     // Delete the product
-    await product.deleteOne()
+    await productModel.deleteOne({ _id: productId })
 
-    // Fetch the remaining products after deletion
+    // Fetch all remaining products
     const remainingProducts = await productModel.find()
 
     // Return the updated list of products
