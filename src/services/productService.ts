@@ -72,7 +72,7 @@ export const createProduct = async (req: Request, res: Response) => {
 // @route   PUT /api/products/:id
 // @access  Private/Admin
 export const updateProduct = async (req: Request, res: Response) => {
-  const { title, description, price, category, image } = req.body
+  const { title, description, price, category, image, stock } = req.body
 
   try {
     const product = await productModel.findById(req.params.id)
@@ -87,6 +87,7 @@ export const updateProduct = async (req: Request, res: Response) => {
     product.price = price
     product.category = category
     product.image = image
+    product.stock = stock
 
     // Save the updated product
     const updatedProduct = await product.save()
