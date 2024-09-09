@@ -109,7 +109,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
     // Return the success message along with the updated product list
     return res.json({
       message: 'Product removed successfully',
-      products: remainingProducts,
+      data: remainingProducts,
     })
   } catch (error: any) {
     console.error('Error deleting product:', error)
