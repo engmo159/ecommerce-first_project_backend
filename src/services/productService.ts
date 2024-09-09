@@ -89,38 +89,21 @@ export const updateProduct = async (req: Request, res: Response) => {
 // @desc    Delete a product
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
+// In productService.ts
 
-export const deleteProduct = async (req: Request, res: Response) => {
+export const deleteProduct = async (id: string) => {
   try {
-    // Find the product by ID
-    const product = await productModel.findById(req.params.id)
-
-    if (!product) {
-      // If the product is not found, return a 404 error
-      return res.status(404).json({ message: 'Product not found' })
+    const product = await productModel.findById(id)
+    if (product) {
+      await product.deleteOne()
+      return { message: 'Product removed' }
+    } else {
+      return { message: 'Product not found' }
     }
-
-    // Delete the product
-    await product.deleteOne()
-
-    // Fetch the remaining products after deletion
-    const remainingProducts = await productModel.find()
-
-    // Return the success message along with the updated product list
-    return res.json({
-      message: 'Product removed successfully',
-      data: remainingProducts,
-    })
-  } catch (error: any) {
-    console.error('Error deleting product:', error)
-
-    // Return server error
-    return res
-      .status(500)
-      .json({ message: 'Server error', error: error.message })
+  } catch (error) {
+    throw new Error('Server error')
   }
 }
-
 // Insert products to database
 export const getProducts = async () => {
   return await productModel.find()

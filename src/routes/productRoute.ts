@@ -40,12 +40,15 @@ router.put('/edit/:id', async (req, res) => {
   }
 })
 
+// In your router file
+
 router.delete('/:id', async (req, res) => {
   try {
-    const products = await deleteProduct(req, res)
-    return res.status(200).send(products)
-  } catch (err) {
-    return res.status(500).send('something went wrong!')
+    const result = await deleteProduct(req.params.id)
+    res.status(200).json(result)
+  } catch (error) {
+    console.error('Error in deleting product:', error)
+    res.status(500).json({ message: 'Internal Server Error' })
   }
 })
 router.post('/add', async (req, res) => {
