@@ -8,15 +8,9 @@ import { productArray } from '../data/product'
 export const getAllProducts = async () => {
   try {
     const products = await productModel.find({})
-    if (!products) {
-      return
-      // res.status(404).json({ message: 'Products not found' })
-    }
     return products
-    //  res.json(products)
   } catch (error) {
-    return
-    //  res.status(500).json({ message: 'Server error' })
+    throw new Error('Server error')
   }
 }
 
