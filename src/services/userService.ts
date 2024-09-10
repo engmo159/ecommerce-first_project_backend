@@ -213,9 +213,12 @@ export const changeUserRole = async (req: Request, res: Response) => {
     user.role = user.role === 'admin' ? 'user' : 'admin'
     await user.save()
 
+    // Fetch all users after updating the role
+    const allUsers = await userModel.find()
+
     return res
       .status(200)
-      .json({ message: 'User role updated successfully', user })
+      .json({ message: 'User role updated successfully', users: allUsers })
   } catch (error) {
     return res.status(500).json({ message: 'Server error', error })
   }
