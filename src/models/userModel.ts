@@ -15,7 +15,6 @@ const userSchema = new Schema<IUser>(
   {
     firstName: {
       type: String,
-      required: true,
     },
     lastName: {
       type: String,
@@ -40,10 +39,7 @@ const userSchema = new Schema<IUser>(
     image: {
       type: String,
     },
-    role: {
-      type: String,
-      required: true,
-    },
+    role: { type: String, enum: ['admin', 'user'], default: 'user' },
   },
   { timestamps: true }
 )
