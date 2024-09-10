@@ -7,6 +7,7 @@ import {
   getAllUsers,
   getLastRegisteredUser,
   changeUserRole,
+  getUserById,
 } from '../services/userService'
 import validateJWT from '../middlewares/validateJWT'
 
@@ -86,3 +87,6 @@ router.get('/last-user', async (req, res) => {
 
 // Route to change user role
 router.put('/change-role/:id', validateJWT, changeUserRole)
+
+// Route to get user information by ID
+router.get('/:id', getUserById)

@@ -223,3 +223,22 @@ export const changeUserRole = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Server error', error })
   }
 }
+
+// get user by id
+export const getUserById = async (req: Request, res: Response) => {
+  const userId = req.params.id
+
+  try {
+    // Find user by ID
+    const user = await userModel.findById(userId)
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Return user details
+    return res.status(200).json(user)
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error })
+  }
+}
