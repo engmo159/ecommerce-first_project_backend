@@ -269,3 +269,27 @@ export const updateUserById = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Server error', error })
   }
 }
+
+// Delete user by ID
+export const deleteUserById = async (req: Request, res: Response) => {
+  const userId = req.params.id
+
+  try {
+    // Find and delete the user by ID
+    const deletedUser = await userModel.findByIdAndDelete(userId)
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Fetch all remaining users after deletion
+    const allUsers = await userModel.find({}).select('-password') // Exclude the password from the response
+
+    return res.status(200).json({
+      message: 'User deleted successfully',
+      users: allUsers,
+    })
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error })
+  }
+}

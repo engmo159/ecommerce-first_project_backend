@@ -9,6 +9,7 @@ import {
   changeUserRole,
   getUserById,
   updateUserById,
+  deleteUserById,
 } from '../services/userService'
 import validateJWT from '../middlewares/validateJWT'
 
@@ -94,3 +95,5 @@ router.get('/:id', getUserById)
 
 // Route to update user info by id
 router.put('/update/:id', updateUserById)
+
+router.delete('/delete-user/:id', deleteUserById)
