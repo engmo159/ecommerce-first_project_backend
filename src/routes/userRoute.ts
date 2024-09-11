@@ -8,6 +8,7 @@ import {
   getLastRegisteredUser,
   changeUserRole,
   getUserById,
+  updateUserById,
 } from '../services/userService'
 import validateJWT from '../middlewares/validateJWT'
 
@@ -90,3 +91,6 @@ router.put('/change-role/:id', validateJWT, changeUserRole)
 
 // Route to get user information by ID
 router.get('/:id', getUserById)
+
+// Route to update user info by id
+router.put('/update/:id', updateUserById)

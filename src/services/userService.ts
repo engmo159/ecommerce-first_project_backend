@@ -242,3 +242,30 @@ export const getUserById = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Server error', error })
   }
 }
+
+// Controller function to update user info by id
+export const updateUserById = async (req: Request, res: Response) => {
+  const userId = req.params.id // Get user id from params
+  const updatedData = req.body // Get updated data from the request body
+
+  try {
+    // Find user by ID and update
+    const updatedUser = await userModel
+      .findByIdAndUpdate(
+        userId,
+        { $set: updatedData }, // Set updated fields
+        { new: true, runValidators: true } // Options to return the new document and validate updates
+      )
+      .select('-password') // Exclude password from returned data
+
+    // If user not found
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    // Send updated user data as a response
+    return res.status(200).json(updatedUser)
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error })
+  }
+}
