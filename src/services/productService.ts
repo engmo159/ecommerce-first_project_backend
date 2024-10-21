@@ -2,9 +2,6 @@ import { Request, Response } from 'express'
 import productModel from '../models/productModel'
 import { productArray } from '../data/product'
 
-// @desc    Fetch all products
-// @route   GET /api/products
-// @access  Public
 export const getAllProducts = async () => {
   try {
     const products = await productModel.find({})
@@ -14,9 +11,6 @@ export const getAllProducts = async () => {
   }
 }
 
-// @desc    Fetch single product by ID
-// @route   GET /api/products/:id
-// @access  Public
 export const getProductById = async (id: string) => {
   try {
     const product = await productModel.findById(id)
@@ -30,9 +24,6 @@ export const getProductById = async (id: string) => {
   }
 }
 
-// @desc    Create a new product
-// @route   POST /api/products
-// @access  Private/Admin
 export const createProduct = async (req: Request, res: Response) => {
   const { title, description, price, category, image, rating, stock } = req.body
 
@@ -68,9 +59,6 @@ export const createProduct = async (req: Request, res: Response) => {
   }
 }
 
-// @desc    Update a product
-// @route   PUT /api/products/:id
-// @access  Private/Admin
 export const updateProduct = async (req: Request, res: Response) => {
   const { title, description, price, category, image, stock } = req.body
 
@@ -97,11 +85,6 @@ export const updateProduct = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'Server error' }) // Send error response
   }
 }
-
-// @desc    Delete a product
-// @route   DELETE /api/products/:id
-// @access  Private/Admin
-// In productService.ts
 
 export const deleteProductService = async (productId: string) => {
   try {

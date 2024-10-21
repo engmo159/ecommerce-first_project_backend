@@ -60,10 +60,8 @@ router.get('/', async (req, res) => {
 
 router.put('/edit', validateJWT, async (req, res) => {
   try {
-    // Call updateUser and receive the result
     const updatedUser = await updateUser(req, res)
 
-    // Check if updatedUser is returned correctly
     if (updatedUser) {
       return res
         .status(200)
@@ -78,7 +76,7 @@ router.put('/edit', validateJWT, async (req, res) => {
   }
 })
 
-// Get all users route - protected with JWT validation middleware
+// Get all users route
 router.get('/users', validateJWT, getAllUsers)
 export default router
 
