@@ -78,7 +78,6 @@ router.put('/edit', validateJWT, async (req, res) => {
 
 // Get all users route
 router.get('/users', validateJWT, getAllUsers)
-export default router
 
 router.get('/last-user', async (req, res) => {
   const { data, statusCode } = await getLastRegisteredUser()
@@ -95,3 +94,4 @@ router.get('/:id', getUserById)
 router.put('/update/:id', updateUserById)
 
 router.delete('/delete-user/:id', deleteUserById)
+export default router
