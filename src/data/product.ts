@@ -1,7 +1,7 @@
 export const productArray = [
   {
     title: 'Fjallraven - Foldsack No. 1 Backpack, Fits 15 Laptops',
-    price: 109.95,
+    price: 102.95,
     description: 'Your perfect pack for everyday use and walks in the forest.',
     category: "men's clothing",
     image:
